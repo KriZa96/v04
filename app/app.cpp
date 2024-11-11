@@ -3,7 +3,7 @@
 namespace vsite::oop::v4
 {
 
-	std::string leg_counter::add_animal(animal* some_animal)
+	std::string leg_counter::add_animal(const animal* some_animal)
 	{
 		if (some_animal == nullptr) {
 			return "No new animal has been made";
