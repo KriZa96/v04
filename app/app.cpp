@@ -20,7 +20,7 @@ namespace vsite::oop::v4
 		return leg_num;
 	}
 
-	unsigned int cockroach::legs() const
+	unsigned int insect::legs() const
 	{
 		return 6;
 	}

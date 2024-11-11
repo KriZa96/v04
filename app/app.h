@@ -14,14 +14,12 @@ namespace vsite::oop::v4
 
 	class insect: public animal
 	{
-		// We have 2 subclasses spider and cockroach that have 2 different leg counts
-		// That's why we didn't define leg counts here as we did in bird class or in spider class
+		unsigned int legs() const override;
 	};
 
 	class cockroach: public insect
 	{
 	public:
-		unsigned int legs() const override;
 		std::string species() const override;
 		~cockroach() = default;
 	};
@@ -34,8 +32,7 @@ namespace vsite::oop::v4
 
 	class tarantula: public spider
 	{
-	public:
-		
+	public:	
 		std::string species() const override;
 		~tarantula() = default;
 	};
