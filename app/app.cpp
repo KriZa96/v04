@@ -10,9 +10,8 @@ namespace vsite::oop::v4
 		}
 
 		leg_num += some_animal->legs();
-		std::string animal_name = some_animal->species();
 
-		return animal_name;
+		return some_animal->species();
 	}
 
 	unsigned int leg_counter::legs() const

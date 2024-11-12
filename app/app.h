@@ -21,10 +21,9 @@ namespace vsite::oop::v4
 	{
 	public:
 		std::string species() const override;
-		~cockroach() = default;
 	};
 
-	class spider: public insect
+	class spider: public animal
 	{
 	public:
 		unsigned int legs() const override;
@@ -34,7 +33,6 @@ namespace vsite::oop::v4
 	{
 	public:	
 		std::string species() const override;
-		~tarantula() = default;
 	};
 
 	class bird: public animal
@@ -47,7 +45,6 @@ namespace vsite::oop::v4
 	{
 	public:
 		std::string species() const override;
-		~sparrow() = default;
 	};
 
 	class leg_counter
