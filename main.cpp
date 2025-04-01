@@ -3,6 +3,7 @@
 class ship : public vsite::nwp::window {
 public:
 	ship(uint8_t size_x, uint8_t size_y):
+		created_(false),
 		moving_speed_(0), 
 		size_x_(size_x), 
 		size_y_(size_y) {}
@@ -12,7 +13,10 @@ public:
 	}
 
 	void create_ship(vsite::nwp::window window_) {
-		create(window_, WS_CHILD | WS_VISIBLE | SS_CENTER, "X", 0, current_position_.x, current_position_.y, size_x_, size_y_);
+		if (!created_) {
+			create(window_, WS_CHILD | WS_VISIBLE | SS_CENTER, "X", 0, current_position_.x, current_position_.y, size_x_, size_y_);
+			created_ = true;
+		}
 		reset_position();
 	}
 
@@ -49,6 +53,7 @@ private:
 	POINT current_position_;
 	uint8_t size_x_;
 	uint8_t size_y_;
+	bool created_;
 
 	void reset_position() {
 		SetWindowPos(*this, 0, current_position_.x, current_position_.y, 0, 0, SWP_FRAMECHANGED | SWP_NOSIZE | SWP_NOZORDER);
@@ -96,9 +101,7 @@ class main_window : public vsite::nwp::window
 protected:
 	void on_left_button_down(POINT p) override { 
 		ship_.set_current_position(p);
-		if (!ship_) {
-			ship_.create_ship(*this);
-		}	
+		ship_.create_ship(*this);
 	}
 	void on_key_up(int vk) override {
 		if (ship_) ship_.stop_moving();
