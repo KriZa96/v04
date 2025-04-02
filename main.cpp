@@ -3,7 +3,6 @@
 class ship : public vsite::nwp::window {
 public:
 	ship(uint8_t size_x, uint8_t size_y):
-		created_(false),
 		moving_speed_(0), 
 		size_x_(size_x), 
 		size_y_(size_y) {}
@@ -13,26 +12,27 @@ public:
 	}
 
 	void create_ship(vsite::nwp::window window_) {
-		if (!created_) {
-			create(window_, WS_CHILD | WS_VISIBLE | SS_CENTER, "X", 0, current_position_.x, current_position_.y, size_x_, size_y_);
-			created_ = true;
+		if (!*this) {
+			create(window_, WS_CHILD | WS_VISIBLE | SS_CENTER | SS_CENTERIMAGE, "X", 0, current_position_.x, current_position_.y, size_x_, size_y_);
 		}
 		reset_position();
 	}
 
-	void set_current_position(POINT position) {
+	void set_current_position(const POINT& position) {
 		current_position_ = position;
 	}
 
 	void stop_moving() {
 		moving_speed_ = 0;
+		reset_style();
 	}
 
-	void set_moving_speed(int moving_speed) {
+	void set_moving_speed(const int moving_speed) {
 		moving_speed_ = moving_speed;
+		reset_style();
 	}
 
-	void move(RECT window_size, int key_press) {
+	void move(const RECT& window_size, const int key_press) {
 		switch (key_press) {
 		case VK_UP:
 			move_up(window_size);
@@ -53,13 +53,24 @@ private:
 	POINT current_position_;
 	uint8_t size_x_;
 	uint8_t size_y_;
-	bool created_;
 
-	void reset_position() {
-		SetWindowPos(*this, 0, current_position_.x, current_position_.y, 0, 0, SWP_FRAMECHANGED | SWP_NOSIZE | SWP_NOZORDER);
+	void reset_style() {
+		auto style = GetWindowLong(*this, GWL_STYLE);
+		if (moving_speed_ > 0) {
+			style |= WS_BORDER;
+		}
+		else if (style & WS_BORDER) {
+			style &= ~WS_BORDER;
+		}
+		SetWindowLong(*this, GWL_STYLE, style);
+		reset_position();
 	}
 
-	void move_up(RECT window_size) {
+	void reset_position() {
+		SetWindowPos(*this, 0, current_position_.x, current_position_.y, 0, 0,  SWP_FRAMECHANGED | SWP_NOSIZE | SWP_NOZORDER);
+	}
+
+	void move_up(const RECT& window_size) {
 		current_position_.y = (
 			current_position_.y - moving_speed_ >= window_size.top ?
 			current_position_.y - moving_speed_ :
@@ -68,7 +79,7 @@ private:
 		reset_position();
 	}
 
-	void move_down(RECT window_size) {
+	void move_down(const RECT& window_size) {
 		current_position_.y = (
 			current_position_.y + moving_speed_ <= window_size.bottom ?
 			current_position_.y + moving_speed_ :
@@ -77,7 +88,7 @@ private:
 		reset_position();
 	}
 
-	void move_left(RECT window_size) {
+	void move_left(const RECT& window_size) {
 		current_position_.x = (
 			current_position_.x - moving_speed_ >= window_size.left ?
 			current_position_.x - moving_speed_ :
@@ -86,7 +97,7 @@ private:
 		reset_position();
 	}
 
-	void move_right(RECT window_size) {
+	void move_right(const RECT& window_size) {
 		current_position_.x = (
 			current_position_.x + moving_speed_ <= window_size.right ?
 			current_position_.x + moving_speed_ :
@@ -104,14 +115,13 @@ protected:
 		ship_.create_ship(*this);
 	}
 	void on_key_up(int vk) override {
-		if (ship_) ship_.stop_moving();
+		if (ship_) ship_.stop_moving(); 
 	}
 	void on_key_down(int vk) override {
 		if (!ship_) return;
 
 		RECT window_size;
 		bool is_window_present = GetClientRect(*this, &window_size);
-		if (!is_window_present) return;
 
 		ship_.set_moving_speed(GetKeyState(VK_CONTROL) < 0 ? 10 : 5);
 		ship_.move(window_size, vk);
