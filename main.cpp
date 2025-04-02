@@ -15,7 +15,9 @@ public:
 		if (!*this) {
 			create(window_, WS_CHILD | WS_VISIBLE | SS_CENTER | SS_CENTERIMAGE, "X", 0, current_position_.x, current_position_.y, size_x_, size_y_);
 		}
-		reset_position();
+		else {
+			reset_position();
+		}
 	}
 
 	void set_current_position(const POINT& position) {
